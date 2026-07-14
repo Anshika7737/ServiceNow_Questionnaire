@@ -1,65 +1,198 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  BookOpen,
+  Shield,
+  Users,
+  GraduationCap,
+  Upload,
+  BarChart3,
+  UserPlus,
+} from "lucide-react";
+import { displayTrackName, formatTrackList } from "@/lib/categories";
+import { listExamCategories } from "@/lib/exams";
+import { ThemeToggle } from "@/components/theme-toggle";
 
-export default function Home() {
+export default async function HomePage() {
+  const categories = await listExamCategories();
+  const trackNames = categories.map((c) => displayTrackName(c.label));
+  const trackList = formatTrackList(trackNames);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--text)]">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent)] text-white">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <span className="text-lg font-semibold tracking-tight">CertPrep</span>
+        </div>
+        <nav className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            href="/login"
+            className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
+          >
+            Log in
+          </Link>
+        </nav>
+      </header>
+
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-16">
+        <section className="mx-auto mb-20 max-w-3xl text-center">
+          <p className="mb-4 text-sm font-medium uppercase tracking-widest text-[var(--accent)]">
+            ServiceNow Certification Platform
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+          <h1 className="mb-6 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+            Master your certification exams with structured practice
+          </h1>
+          <p className="mb-8 text-lg text-[var(--text-muted)]">
+            Invite-only platform for ServiceNow certification practice. Admins invite
+            managers, managers invite learners - across {trackList} tracks.
+          </p>
+          <div className="flex justify-center">
+            <Link
+              href="/login"
+              className="rounded-xl bg-[var(--accent)] px-8 py-3 font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
+            >
+              Log in
+            </Link>
+          </div>
+        </section>
+
+        <section className="mb-20">
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight">Exam tracks</h2>
+          {categories.length === 0 ? (
+            <p className="text-center text-sm text-[var(--text-muted)]">
+              Exam tracks will appear here once an admin adds them.
+            </p>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {categories.map((exam) => (
+                <div
+                  key={exam.slug}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition-colors hover:border-[var(--accent)]/40"
+                >
+                  <h3 className="mb-1 text-lg font-semibold text-[var(--accent)]">{exam.label}</h3>
+                  <p className="text-sm text-[var(--text-muted)]">{exam.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="mb-20">
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight">
+            Three roles, one platform
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            <RoleCard
+              icon={<Shield className="h-7 w-7 text-[var(--accent)]" />}
+              title="Admin"
+              features={[
+                "Upload PDF question dumps",
+                "Build the shared question bank",
+                "Invite managers for each exam track",
+              ]}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <RoleCard
+              icon={<Users className="h-7 w-7 text-[var(--accent)]" />}
+              title="Manager"
+              features={[
+                "Oversee users on your team",
+                "View exam scores and progress",
+                "Invite learners to your track",
+              ]}
+            />
+            <RoleCard
+              icon={<GraduationCap className="h-7 w-7 text-[var(--accent)]" />}
+              title="User"
+              features={[
+                "Practice certification questions",
+                "Take timed mock exams",
+                "Track your own scores",
+              ]}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 sm:p-12">
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight">How it works</h2>
+          <div className="grid gap-8 sm:grid-cols-3">
+            <Step
+              icon={<Upload className="h-6 w-6" />}
+              step="1"
+              title="Admin uploads dumps"
+              description="PDF dumps are parsed and added to the question bank by exam type."
+            />
+            <Step
+              icon={<UserPlus className="h-6 w-6" />}
+              step="2"
+              title="Managers invite teams"
+              description="Each manager owns a track and invites users to practice under them."
+            />
+            <Step
+              icon={<BarChart3 className="h-6 w-6" />}
+              step="3"
+              title="Track performance"
+              description="Managers see scores; users practice and improve before the real exam."
+            />
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t border-[var(--border)] py-8 text-center text-sm text-[var(--text-muted)]">
+        CertPrep - ServiceNow certification practice platform
+      </footer>
+    </div>
+  );
+}
+
+function RoleCard({
+  icon,
+  title,
+  features,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  features: string[];
+}) {
+  return (
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+      <div className="mb-4">{icon}</div>
+      <h3 className="mb-4 text-xl font-semibold">{title}</h3>
+      <ul className="space-y-2">
+        {features.map((f) => (
+          <li key={f} className="flex items-start gap-2 text-sm text-[var(--text-muted)]">
+            <span className="mt-0.5 text-[var(--accent)]">·</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Step({
+  icon,
+  step,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  step: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="text-center">
+      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-[var(--accent)]">
+        {icon}
+      </div>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
+        Step {step}
+      </p>
+      <h3 className="mb-2 font-semibold">{title}</h3>
+      <p className="text-sm text-[var(--text-muted)]">{description}</p>
     </div>
   );
 }

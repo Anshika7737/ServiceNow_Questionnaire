@@ -36,6 +36,25 @@ yarn-error.log*
 # vercel
 .vercel
 
+# uploads
+/uploads
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# python ocr venv
+/python-extractor/.venv
+/.python-venv
+.python-venv/ocr-worker.pid
+.python-venv/ocr-worker.log
+/python-extractor/.ocr-cache
+
+# local sqlite + OCR model data
+*.db
+*.db-journal
+eng.traineddata
+__pycache__/
+*.pyc

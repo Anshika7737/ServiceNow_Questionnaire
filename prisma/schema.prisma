@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role
+  examFocus    String?
+  disabled     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  invitedById String?
+  invitedBy   User?  @relation("UserInvites", fields: [invitedById], references: [id])
+  invitees    User[] @relation("UserInvites")
+
+  invitesSent  Invite[]      @relation("InviteSender")
+  examAttempts ExamAttempt[]
+  pdfUploads   PdfUpload[]
+}
+
+model Invite {
+  id        String    @id @default(cuid())
+  email     String
+  role      Role
+  examFocus String?
+  token     String    @unique
+  used      Boolean   @default(false)
+  expiresAt DateTime
+  senderId  String
+  sender    User      @relation("InviteSender", fields: [senderId], references: [id])
+  createdAt DateTime  @default(now())
+}
+
+model ExamCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  label       String
+  description String
+  isBuiltIn   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Question {
+  id            String     @id @default(cuid())
+  text          String
+  options       String
+  correctAnswer String
+  explanation   String?
+  examType      String
+  reviewStatus  String     @default("pending")
+  pdfUploadId   String?
+  pdfUpload     PdfUpload? @relation(fields: [pdfUploadId], references: [id])
+  createdAt     DateTime   @default(now())
+}
+
+model PdfUpload {
+  id           String     @id @default(cuid())
+  filename     String
+  filepath     String
+  examType     String
+  status       String     @default("pending")
+  questionCount Int       @default(0)
+  uploadedById String
+  uploadedBy   User       @relation(fields: [uploadedById], references: [id])
+  questions    Question[]
+  createdAt    DateTime   @default(now())
+}
+
+model ExamAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  examType       String
+  score          Float
+  totalQuestions Int
+  correctAnswers Int
+  completedAt    DateTime @default(now())
+}
