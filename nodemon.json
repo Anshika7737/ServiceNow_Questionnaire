@@ -8,7 +8,7 @@
   ],
   "ext": "ts,tsx,js,json,prisma,css",
   "ignore": ["src/generated/**", ".next/**", "node_modules/**"],
-  "exec": "bash -c 'bash scripts/start-python-worker.sh 2>/dev/null || true; exec next dev -p 3001'",
+  "exec": "next dev -p 3001",
   "delay": 300,
   "signal": "SIGTERM"
 }
